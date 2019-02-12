@@ -26,6 +26,8 @@ var defaultExcludedFiles = []string{
 	configDir,
 }
 
+// TODO test this file more granularly (currently integration tested in bitrot_test)
+
 // Config for bitrot checks such as file/folder names to exclude.
 type Config struct {
 	ExcludedFiles   []string
