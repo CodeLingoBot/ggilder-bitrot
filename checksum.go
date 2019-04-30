@@ -40,12 +40,12 @@ func (r *sha1Reader) SHA1Sum() ([]byte, error) {
 func (r *sha1Reader) readAll() (err error) {
 	for {
 		b := make([]byte, r.bufferSize, r.bufferSize)
-		n, err := r.reader.Read(b)
-		if err != nil && err != io.EOF {
+		n, innererr := r.reader.Read(b)
+		if innererr != nil && innererr != io.EOF {
 			return err
 		}
 		r.hash.Write(b[:n])
-		if err == io.EOF {
+		if innererr == io.EOF {
 			return nil
 		}
 	}

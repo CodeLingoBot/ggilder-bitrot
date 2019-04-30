@@ -139,8 +139,8 @@ func (cmd *Generate) Execute(args []string) (err error) {
 		config.ExcludedFiles = cmd.Exclude
 	}
 	assertNoExtraArgs(&args, cmd.logger)
-	path, err := pathString(cmd.Arguments.Path)
-	if err != nil {
+	path, innererr := pathString(cmd.Arguments.Path)
+	if innererr != nil {
 		return err
 	}
 
@@ -149,19 +149,19 @@ func (cmd *Generate) Execute(args []string) (err error) {
 	// Prepare manifest file destination
 	manifestDir := filepath.Join(path, manifestDirName)
 	// Using MkdirAll because it doesn't return an error when the path is already a directory
-	err = os.MkdirAll(manifestDir, 0755)
-	if err != nil {
+	innererr = os.MkdirAll(manifestDir, 0755)
+	if innererr != nil {
 		return
 	}
 
-	manifest, err := NewManifest(path, config)
-	if err != nil {
+	manifest, innererr := NewManifest(path, config)
+	if innererr != nil {
 		return err
 	}
 
 	// Potentially validate manifest against previous
-	latestManifestFile, err := LatestManifestFileForPath(path)
-	if err != nil {
+	latestManifestFile, innererr := LatestManifestFileForPath(path)
+	if innererr != nil {
 		return err
 	}
 	if latestManifestFile != nil {
@@ -172,15 +172,15 @@ func (cmd *Generate) Execute(args []string) (err error) {
 	}
 
 	// Write new manifest
-	manifestFile, err := NewManifestFile(manifest, cmd.Pretty)
-	if err != nil {
+	manifestFile, innererr := NewManifestFile(manifest, cmd.Pretty)
+	if innererr != nil {
 		return err
 	}
 
 	manifestPath := filepath.Join(manifestDir, manifestFile.Filename)
-	if _, err := os.Stat(manifestPath); os.IsNotExist(err) {
-		err = ioutil.WriteFile(manifestPath, manifestFile.JSONBytes, 0644)
-		if err != nil {
+	if _, innererr := os.Stat(manifestPath); os.IsNotExist(innererr) {
+		innererr = ioutil.WriteFile(manifestPath, manifestFile.JSONBytes, 0644)
+		if innererr != nil {
 			return err
 		}
 
@@ -198,20 +198,20 @@ func (cmd *Validate) Execute(args []string) (err error) {
 		config.ExcludedFiles = cmd.Exclude
 	}
 	assertNoExtraArgs(&args, cmd.logger)
-	path, err := pathString(cmd.Arguments.Path)
-	if err != nil {
+	path, innererr := pathString(cmd.Arguments.Path)
+	if innererr != nil {
 		return err
 	}
 
 	cmd.logger.Printf("Validating manifest for %s...\n", path)
 
-	currentManifest, err := NewManifest(path, config)
-	if err != nil {
+	currentManifest, innererr := NewManifest(path, config)
+	if innererr != nil {
 		return err
 	}
 
-	latestManifestFile, err := LatestManifestFileForPath(path)
-	if err != nil {
+	latestManifestFile, innererr := LatestManifestFileForPath(path)
+	if innererr != nil {
 		return err
 	}
 
@@ -241,23 +241,23 @@ func (cmd *Compare) Execute(args []string) (err error) {
 		config.ExcludedFiles = cmd.Exclude
 	}
 	assertNoExtraArgs(&args, cmd.logger)
-	oldPath, err := pathString(cmd.Arguments.Old)
-	if err != nil {
+	oldPath, innererr := pathString(cmd.Arguments.Old)
+	if innererr != nil {
 		return err
 	}
 
-	newPath, err := pathString(cmd.Arguments.New)
-	if err != nil {
+	newPath, innererr := pathString(cmd.Arguments.New)
+	if innererr != nil {
 		return err
 	}
 
-	oldManifest, err := NewManifest(oldPath, config)
-	if err != nil {
+	oldManifest, innererr := NewManifest(oldPath, config)
+	if innererr != nil {
 		return err
 	}
 
-	newManifest, err := NewManifest(newPath, config)
-	if err != nil {
+	newManifest, innererr := NewManifest(newPath, config)
+	if innererr != nil {
 		return err
 	}
 
@@ -277,23 +277,23 @@ func (cmd *Compare) Execute(args []string) (err error) {
 
 func (cmd *CompareLatestManifests) Execute(args []string) (err error) {
 	assertNoExtraArgs(&args, cmd.logger)
-	oldPath, err := pathString(cmd.Arguments.Old)
-	if err != nil {
+	oldPath, innererr := pathString(cmd.Arguments.Old)
+	if innererr != nil {
 		return err
 	}
 
-	newPath, err := pathString(cmd.Arguments.New)
-	if err != nil {
+	newPath, innererr := pathString(cmd.Arguments.New)
+	if innererr != nil {
 		return err
 	}
 
-	oldManifest, err := LatestManifestFileForPath(oldPath)
-	if err != nil {
+	oldManifest, innererr := LatestManifestFileForPath(oldPath)
+	if innererr != nil {
 		return err
 	}
 
-	newManifest, err := LatestManifestFileForPath(newPath)
-	if err != nil {
+	newManifest, innererr := LatestManifestFileForPath(newPath)
+	if innererr != nil {
 		return err
 	}
 
